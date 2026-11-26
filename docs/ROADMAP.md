@@ -8,7 +8,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
-| 0. Foundations | 17 | 10 | 8–12 h |
+| 0. Foundations | 17 | 11 | 8–12 h |
 | 1. Data ingestion | 7 | 0 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **10** | **≈ 100–140 h** |
+| **Core total** | **68** | **11** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -73,8 +73,8 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 
   *Done 2026-11-26:* Boot 4.2.0, Java 25, package `io.github.inankova.triage`, main class `TriageApplication`. `./mvnw verify` passes: the context test starts `pgvector/pgvector:pg18` with Testcontainers and Flyway connects to it.
 - [x] **P0.13 Database through Docker Compose:** `compose.yaml` with `pgvector/pgvector:pg18`, started automatically by `spring-boot:run`. `/actuator/health` shows each component (`show-components: always`), and `ActuatorHealthTests` checks that `db` is `UP`. *Done 2026-11-26.*
-- [ ] **P0.14 First migration and first integration test:** `V1__init.sql` runs `CREATE EXTENSION IF NOT EXISTS vector`, and a `@SpringBootTest` with Testcontainers (`@ServiceConnection`) proves the migrations run.
-  *Done when:* the test is green with no local database needed.
+- [x] **P0.14 First migration and first integration test:** `V1__init.sql` runs `CREATE EXTENSION IF NOT EXISTS vector`, and a `@SpringBootTest` with Testcontainers (`@ServiceConnection`) proves the migrations run.
+  *Done 2026-11-26:* `FlywayMigrationTests` checks that Flyway applied version 1 and that `vector` is in `pg_extension`. It runs against `pgvector/pgvector:pg18` in Testcontainers, so no local database is needed.
 - [ ] **P0.15 CI:** `.github/workflows/ci.yml` with JDK 25, a Maven cache, and `./mvnw verify` on every push and pull request. Add the CI badge to the README.
   *Done when:* CI is green on GitHub, and a deliberately failing test turns the PR red.
 - [ ] **P0.16 Quality tooling:** Spotless (format check in CI), a JaCoCo coverage report, Dependabot (Maven + GitHub Actions), and a first ArchUnit test (no cycles between packages).
