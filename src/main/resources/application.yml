@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: ai-issue-triage
+  jpa:
+    # Don't keep a database session open while rendering views; load what a view needs in the service layer.
+    open-in-view: false

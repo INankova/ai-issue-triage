@@ -1,0 +1,14 @@
+# Local development database. Spring Boot's Docker Compose support starts it
+# automatically on `spring-boot:run` (DESIGN §17, ADR-0003).
+services:
+  postgres:
+    image: 'pgvector/pgvector:pg18'
+    environment:
+      - 'POSTGRES_DB=triage'
+      - 'POSTGRES_USER=triage'
+      - 'POSTGRES_PASSWORD=triage' # local-only credentials, never used outside this compose file
+    ports:
+      - '5432'
+    labels:
+      # The image name isn't "postgres", so tell Spring Boot which connection details to create.
+      org.springframework.boot.service-connection: postgres

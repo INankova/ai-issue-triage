@@ -1,11 +1,21 @@
 # Build output
 target/
-!.mvn/wrapper/maven-wrapper.jar
+build/
+!**/src/main/**/target/
+!**/src/test/**/target/
+# The Maven Wrapper downloads Maven with a script (distributionType=only-script); no jar is needed
+.mvn/wrapper/maven-wrapper.jar
 
 # IDEs
 .idea/
 *.iml
+*.iws
+*.ipr
 .vscode/
+.classpath
+.project
+.settings/
+.factorypath
 
 # OS files
 .DS_Store
