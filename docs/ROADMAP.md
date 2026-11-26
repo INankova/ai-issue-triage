@@ -8,7 +8,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
-| 0. Foundations | 17 | 7 | 8–12 h |
+| 0. Foundations | 17 | 9 | 8–12 h |
 | 1. Data ingestion | 7 | 0 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **7** | **≈ 100–140 h** |
+| **Core total** | **68** | **9** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -57,8 +57,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 - [x] **P0.4 IntelliJ IDEA installed.** Recommended: update to the latest version (Help → Check for Updates).
 - [x] **P0.5 Git installed** (2.45.1). Optional: `winget upgrade Git.Git`.
 - [x] **P0.6 Install JDK 25:** Temurin 25.0.5.1 installed with winget; `JAVA_HOME` and `PATH` point to it, and JDK 21 stays installed as a fallback. *Done 2026-11-26.*
-- [ ] **P0.7 Install WSL 2 and Docker Desktop:** `wsl --install` in an *administrator* terminal → restart → `winget install Docker.DockerDesktop`.
-  *Done when:* `docker run --rm hello-world` prints its greeting.
+- [x] **P0.7 Install WSL 2 and Docker Desktop:** WSL 3.0.5 (with Ubuntu) and Docker Desktop with engine 29.9.3 on the WSL 2 backend; `docker run --rm hello-world` prints its greeting. *Done 2026-11-26.*
 - [ ] **P0.8 GitHub token:** a fine-grained personal access token with read-only access to public repositories and a 90-day expiry, saved as the user environment variable `GITHUB_TOKEN`.
   *Done when:* the rate-limit endpoint reports `limit: 5000`.
 - [ ] **P0.9 Local LLM:** `winget install Ollama.Ollama`, then pull a small chat model and `nomic-embed-text`.
@@ -67,13 +66,12 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
   *Done when:* the token rates are written down, and IntelliJ, Docker and Ollama run together without the machine swapping.
 - [ ] **P0.11 Public GitHub repository:** create `ai-issue-triage` without an auto-generated README, push, choose a licence (MIT suggested), protect `main` (require a pull request and, once CI exists, a passing build), and add PR and issue templates.
   *Done when:* the repo is online and the README and Mermaid diagrams render.
-- [ ] **P0.12 Generate the Spring Boot skeleton** with [start.spring.io](https://start.spring.io) (exact settings in the setup guide):
+- [x] **P0.12 Generate the Spring Boot skeleton** with [start.spring.io](https://start.spring.io) (exact settings in the setup guide):
   - Maven, Java 25, Boot 4.2.x
   - Dependencies: Spring Web, Validation, Spring Data JPA, PostgreSQL Driver, Flyway Migration, Actuator, Docker Compose Support, Testcontainers, Thymeleaf, Configuration Processor
   - No AI dependencies yet ([ADR-0004](adr/0004-spring-ai-for-llm-integration.md)).
 
-  *Done when:* `./mvnw verify` passes locally.
-  *Status 2026-11-26:* generated (Boot 4.2.0, Java 25, package `io.github.inankova.triage`, main class `TriageApplication`) and builds with `-DskipTests`. The context test uses the `pgvector/pgvector:pg18` image and fails only with "Could not find a valid Docker environment", so this step waits for P0.7.
+  *Done 2026-11-26:* Boot 4.2.0, Java 25, package `io.github.inankova.triage`, main class `TriageApplication`. `./mvnw verify` passes: the context test starts `pgvector/pgvector:pg18` with Testcontainers and Flyway connects to it.
 - [ ] **P0.13 Database through Docker Compose:** a `compose.yaml` with `pgvector/pgvector:pg18`, which Spring Boot starts automatically.
   *Done when:* the app starts and `/actuator/health` reports `UP`, including the database.
 - [ ] **P0.14 First migration and first integration test:** `V1__init.sql` runs `CREATE EXTENSION IF NOT EXISTS vector`, and a `@SpringBootTest` with Testcontainers (`@ServiceConnection`) proves the migrations run.
