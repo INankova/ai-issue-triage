@@ -4,3 +4,9 @@ spring:
   jpa:
     # Don't keep a database session open while rendering views; load what a view needs in the service layer.
     open-in-view: false
+
+management:
+  endpoint:
+    health:
+      # Show each component's status (db, diskSpace, ...) but not details such as the database version.
+      show-components: always
