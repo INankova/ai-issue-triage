@@ -1,0 +1,26 @@
+# Build output
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets and local environment
+.env
+*.env
+!.env.example
+
+# Raw eval output (summaries worth keeping go to docs/eval-results/)
+eval-output/
+
+# Local data dumps
+data/raw/
+
+# Personal notes in Bulgarian (not part of the public repository)
+notes-bg/
