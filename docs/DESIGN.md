@@ -306,10 +306,10 @@ The design is two-stage: cheap retrieval first, an expensive judgement only on a
 
 ## 14. Cost model
 
-**Current mode: $0** ([ADR-0009](adr/0009-free-by-default-local-models.md)). Everything runs on local models, so the price to watch is *time*, not money. On the development laptop, expect roughly 10–30 seconds per issue with a ~3B model on the CPU (measured in P0.10):
+**Current mode: $0** ([ADR-0009](adr/0009-free-by-default-local-models.md)). Everything runs on local models, so the price to watch is *time*, not money. On the development laptop, expect roughly 20–35 seconds per issue with a ~3B model on the CPU. P0.10 measured `llama3.2` reading the prompt at 45–80 tokens/s and writing the answer at 10–16 tokens/s, so a ~1,100-token prompt with a short JSON answer took 17–32 s. Reading the prompt takes most of that time, so short inputs matter most. Run long evals on mains power, because the laptop slows down on battery. This means:
 
-- a 100-issue dev run takes about 30–60 minutes;
-- the 300-issue test set is an overnight job;
+- a 100-issue dev run takes about 35–60 minutes;
+- the 300-issue test set takes about 2–3 hours, so run it overnight;
 - classify only the eval sets and a ~500-issue demo subset, not every imported issue.
 
 Embedding all ~5,000 issues with the in-process ONNX model takes minutes.
