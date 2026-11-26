@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 import java.util.List;
-
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationInfo;
 import org.flywaydb.core.api.MigrationState;
@@ -22,27 +21,29 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 @SpringBootTest
 class FlywayMigrationTests {
 
-	private final Flyway flyway;
+    private final Flyway flyway;
 
-	private final JdbcClient jdbcClient;
+    private final JdbcClient jdbcClient;
 
-	FlywayMigrationTests(@Autowired Flyway flyway, @Autowired JdbcClient jdbcClient) {
-		this.flyway = flyway;
-		this.jdbcClient = jdbcClient;
-	}
+    FlywayMigrationTests(@Autowired Flyway flyway, @Autowired JdbcClient jdbcClient) {
+        this.flyway = flyway;
+        this.jdbcClient = jdbcClient;
+    }
 
-	@Test
-	void initMigrationIsAppliedOnStartup() {
-		assertThat(flyway.info().applied())
-			.extracting(migration -> migration.getVersion().getVersion(), MigrationInfo::getState)
-			.contains(tuple("1", MigrationState.SUCCESS));
-	}
+    @Test
+    void initMigrationIsAppliedOnStartup() {
+        assertThat(flyway.info().applied())
+                .extracting(migration -> migration.getVersion().getVersion(), MigrationInfo::getState)
+                .contains(tuple("1", MigrationState.SUCCESS));
+    }
 
-	@Test
-	void vectorExtensionIsInstalled() {
-		List<String> extensions = jdbcClient.sql("SELECT extname FROM pg_extension").query(String.class).list();
+    @Test
+    void vectorExtensionIsInstalled() {
+        List<String> extensions = jdbcClient
+                .sql("SELECT extname FROM pg_extension")
+                .query(String.class)
+                .list();
 
-		assertThat(extensions).contains("vector");
-	}
-
+        assertThat(extensions).contains("vector");
+    }
 }

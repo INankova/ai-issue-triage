@@ -15,6 +15,9 @@
 	<description>AI-assisted GitHub issue triage with Spring Boot, PostgreSQL/pgvector and Spring AI</description>
 	<properties>
 		<java.version>25</java.version>
+		<archunit.version>1.5.1</archunit.version>
+		<jacoco.version>0.8.16</jacoco.version>
+		<spotless.version>3.12.0</spotless.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -102,6 +105,12 @@
 			<artifactId>testcontainers-postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.tngtech.archunit</groupId>
+			<artifactId>archunit</artifactId>
+			<version>${archunit.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -128,6 +137,46 @@
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<!-- Attach the coverage agent to the test JVM (it sets the argLine property that Surefire uses). -->
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<!-- Write the HTML coverage report to target/site/jacoco/ after the tests. -->
+						<id>report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>${spotless.version}</version>
+				<configuration>
+					<java>
+						<palantirJavaFormat/>
+					</java>
+				</configuration>
+				<executions>
+					<execution>
+						<!-- Fail the build (and CI) on unformatted code during verify; fix it with spotless:apply. -->
+						<goals>
+							<goal>check</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

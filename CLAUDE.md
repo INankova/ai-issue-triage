@@ -15,7 +15,7 @@ Guidance for AI coding assistants working in this repository.
 
 ## Stack
 
-Java 25 · Spring Boot 4.2.x · Maven Wrapper · PostgreSQL 18 + pgvector · Flyway · Spring Data JPA (CRUD) + `JdbcClient` (vector SQL, job queue) · Spring AI 2.1.x · Thymeleaf + htmx · Testcontainers · JUnit · AssertJ · Mockito · ArchUnit · Resilience4j
+Java 25 · Spring Boot 4.2.x · Maven Wrapper · PostgreSQL 18 + pgvector · Flyway · Spring Data JPA (CRUD) + `JdbcClient` (vector SQL, job queue) · Spring AI 2.1.x · Thymeleaf + htmx · Testcontainers · JUnit · AssertJ · Mockito · ArchUnit · Resilience4j · Spotless (palantir-java-format) · JaCoCo
 
 ## Rules
 
@@ -39,5 +39,6 @@ Fill these in as they become available.
 |---|---|
 | Build and test | `.\mvnw.cmd verify` |
 | Run locally | `.\mvnw.cmd spring-boot:run` (starts `compose.yaml` automatically) |
-| Format | `.\mvnw.cmd spotless:apply` |
+| Format (palantir-java-format; `verify` fails on unformatted code) | `.\mvnw.cmd spotless:apply` |
+| Coverage report | `.\mvnw.cmd verify`, then open `target/site/jacoco/index.html` |
 | Eval | see [docs/EVALUATION.md](docs/EVALUATION.md) §7 |

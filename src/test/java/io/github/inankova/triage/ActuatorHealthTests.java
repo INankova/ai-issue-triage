@@ -20,18 +20,17 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 class ActuatorHealthTests {
 
-	private final MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
-	ActuatorHealthTests(@Autowired MockMvc mockMvc) {
-		this.mockMvc = mockMvc;
-	}
+    ActuatorHealthTests(@Autowired MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+    }
 
-	@Test
-	void healthIsUpAndShowsTheDatabaseAsAComponent() throws Exception {
-		mockMvc.perform(get("/actuator/health"))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.status").value("UP"))
-			.andExpect(jsonPath("$.components.db.status").value("UP"));
-	}
-
+    @Test
+    void healthIsUpAndShowsTheDatabaseAsAComponent() throws Exception {
+        mockMvc.perform(get("/actuator/health"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"))
+                .andExpect(jsonPath("$.components.db.status").value("UP"));
+    }
 }

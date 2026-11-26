@@ -1,0 +1,15 @@
+# Dependabot opens a pull request when a dependency has a newer version (DESIGN §13, ADR-0002).
+# CI must pass on that pull request before it is merged.
+version: 2
+updates:
+  # Libraries and plugins in pom.xml, including the Spring Boot parent.
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: weekly
+
+  # Actions used in .github/workflows/ (the CI workflow arrives in P0.15).
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
