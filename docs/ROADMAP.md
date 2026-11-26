@@ -8,7 +8,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
-| 0. Foundations | 17 | 16 | 8–12 h |
+| 0. Foundations | 17 | 17 | 8–12 h |
 | 1. Data ingestion | 7 | 0 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **16** | **≈ 100–140 h** |
+| **Core total** | **68** | **17** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -29,7 +29,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 
 | | Milestone | Reached when |
 |---|---|---|
-| 🏁 M1 | Walking skeleton | App + database + CI are green (end of Phase 0) |
+| 🏁 M1 | Walking skeleton | App + database + CI are green (end of Phase 0). ✅ Reached 2026-11-26 |
 | 🏁 M2 | Data in | ~5,000 issues imported, eval sets frozen, baseline measured (end of Phase 2) |
 | 🏁 M3 | **MVP** | LLM triage with measured accuracy, visible on a page (Phase 3 + P4.1) |
 | 🏁 M4 | Full pipeline | Review workflow, duplicates, background jobs, webhooks (end of Phase 6) |
@@ -58,8 +58,8 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 - [x] **P0.5 Git installed** (2.45.1). Optional: `winget upgrade Git.Git`.
 - [x] **P0.6 Install JDK 25:** Temurin 25.0.5.1 installed with winget; `JAVA_HOME` and `PATH` point to it, and JDK 21 stays installed as a fallback. *Done 2026-11-26.*
 - [x] **P0.7 Install WSL 2 and Docker Desktop:** WSL 3.0.5 (with Ubuntu) and Docker Desktop with engine 29.9.3 on the WSL 2 backend; `docker run --rm hello-world` prints its greeting. *Done 2026-11-26.*
-- [ ] **P0.8 GitHub token:** a fine-grained personal access token with read-only access to public repositories and a 90-day expiry, saved as the user environment variable `GITHUB_TOKEN`.
-  *Done when:* the rate-limit endpoint reports `limit: 5000`.
+- [x] **P0.8 GitHub token:** a fine-grained personal access token with read-only access to public repositories and a 90-day expiry, saved as the user environment variable `GITHUB_TOKEN`.
+  *Done 2026-11-26:* the rate-limit endpoint reports `limit: 5000`. The token expires on 2027-02-24, so renew it before then.
 - [x] **P0.9 Local LLM:** `winget install Ollama.Ollama`, then pull a small chat model and `nomic-embed-text`.
   *Done 2026-11-26:* Ollama 0.40.18 runs on `localhost:11434` with no account. `ollama list` shows `llama3.2` (3B, 2.0 GB) and `nomic-embed-text` (274 MB, 768-dimension vectors), and `llama3.2` answers a test prompt.
 - [x] **P0.10 Local AI performance check ($0):** cap Docker's memory with a `.wslconfig` file (e.g. `memory=4GB`) so IntelliJ, Docker and Ollama fit in 16 GB of RAM. Then time the model with `ollama run llama3.2 --verbose "Classify: NullPointerException on startup"` and note the prompt and eval rates (tokens/s). A hosted API key is **not** needed now ([ADR-0009](adr/0009-free-by-default-local-models.md), stretch goal S9).
@@ -89,7 +89,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 - [x] **P0.16 Quality tooling:** Spotless (format check in CI), a JaCoCo coverage report, Dependabot (Maven + GitHub Actions), and a first ArchUnit test (no cycles between packages).
   *Done 2026-11-26:* `./mvnw verify` runs `ArchitectureTests` (no cycles between modules), writes the JaCoCo report to `target/site/jacoco/`, and runs `spotless:check` with palantir-java-format (fix with `spotless:apply`). `.github/dependabot.yml` checks Maven and GitHub Actions weekly.
 
-🏁 **M1: walking skeleton**
+🏁 **M1: walking skeleton** ✅ reached 2026-11-26
 
 ## Phase 1: Data ingestion (12–16 h)
 

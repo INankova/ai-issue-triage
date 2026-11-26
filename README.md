@@ -4,7 +4,7 @@
 
 A Spring Boot service that triages GitHub issues for a large open-source project. It classifies issues, finds likely duplicates and drafts replies, and it routes every suggestion through a human review queue. Its accuracy is **measured** against labels the project's maintainers applied.
 
-> 🚧 **Status: Phase 0 (foundations) in progress.** Progress is tracked in [docs/ROADMAP.md](docs/ROADMAP.md).
+> 🚧 **Status: Phase 0 (foundations) done; Phase 1 (data ingestion) is next.** Progress is tracked in [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## What it does
 
@@ -66,8 +66,6 @@ How these numbers are produced: [docs/EVALUATION.md](docs/EVALUATION.md)
 The reason behind each choice is recorded in [docs/adr](docs/adr/).
 
 ## Getting started
-
-*Available after Phase 0 of the roadmap.* Planned:
 
 ```powershell
 # Prerequisites: JDK 25, Docker Desktop, Ollama, a GitHub token in GITHUB_TOKEN
