@@ -1,5 +1,7 @@
 # AI Issue Triage
 
+[![CI](https://github.com/INankova/ai-issue-triage/actions/workflows/ci.yml/badge.svg)](https://github.com/INankova/ai-issue-triage/actions/workflows/ci.yml)
+
 A Spring Boot service that triages GitHub issues for a large open-source project. It classifies issues, finds likely duplicates and drafts replies, and it routes every suggestion through a human review queue. Its accuracy is **measured** against labels the project's maintainers applied.
 
 > 🚧 **Status: Phase 0 (foundations) in progress.** Progress is tracked in [docs/ROADMAP.md](docs/ROADMAP.md).
