@@ -8,7 +8,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
-| 0. Foundations | 17 | 12 | 8–12 h |
+| 0. Foundations | 17 | 13 | 8–12 h |
 | 1. Data ingestion | 7 | 0 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **12** | **≈ 100–140 h** |
+| **Core total** | **68** | **13** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -60,8 +60,8 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 - [x] **P0.7 Install WSL 2 and Docker Desktop:** WSL 3.0.5 (with Ubuntu) and Docker Desktop with engine 29.9.3 on the WSL 2 backend; `docker run --rm hello-world` prints its greeting. *Done 2026-11-26.*
 - [ ] **P0.8 GitHub token:** a fine-grained personal access token with read-only access to public repositories and a 90-day expiry, saved as the user environment variable `GITHUB_TOKEN`.
   *Done when:* the rate-limit endpoint reports `limit: 5000`.
-- [ ] **P0.9 Local LLM:** `winget install Ollama.Ollama`, then pull a small chat model and `nomic-embed-text`.
-  *Done when:* `ollama list` shows both models and the chat model answers a test prompt.
+- [x] **P0.9 Local LLM:** `winget install Ollama.Ollama`, then pull a small chat model and `nomic-embed-text`.
+  *Done 2026-11-26:* Ollama 0.40.18 runs on `localhost:11434` with no account. `ollama list` shows `llama3.2` (3B, 2.0 GB) and `nomic-embed-text` (274 MB, 768-dimension vectors), and `llama3.2` answers a test prompt.
 - [ ] **P0.10 Local AI performance check ($0):** cap Docker's memory with a `.wslconfig` file (e.g. `memory=4GB`) so IntelliJ, Docker and Ollama fit in 16 GB of RAM. Then time the model with `ollama run llama3.2 --verbose "Classify: NullPointerException on startup"` and note the prompt and eval rates (tokens/s). A hosted API key is **not** needed now ([ADR-0009](adr/0009-free-by-default-local-models.md), stretch goal S9).
   *Done when:* the token rates are written down, and IntelliJ, Docker and Ollama run together without the machine swapping.
 - [ ] **P0.11 Public GitHub repository:** create `ai-issue-triage` without an auto-generated README, push, choose a licence (MIT suggested), protect `main` (require a pull request and, once CI exists, a passing build), and add PR and issue templates.
