@@ -22,8 +22,6 @@ class ArchitectureTests {
         slices().matching("io.github.inankova.triage.(*)..")
                 .should()
                 .beFreeOfCycles()
-                // No modules exist yet (the first one arrives in P1.1), so an empty check must not fail.
-                .allowEmptyShould(true)
                 .check(PRODUCTION_CLASSES);
     }
 }

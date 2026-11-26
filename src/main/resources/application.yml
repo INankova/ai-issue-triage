@@ -4,6 +4,9 @@ spring:
   jpa:
     # Don't keep a database session open while rendering views; load what a view needs in the service layer.
     open-in-view: false
+    hibernate:
+      # Flyway owns the schema. Hibernate only checks at startup that the entities match it, and fails fast if not.
+      ddl-auto: validate
 
 management:
   endpoint:
