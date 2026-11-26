@@ -2,7 +2,7 @@
 
 A Spring Boot service that triages GitHub issues for a large open-source project. It classifies issues, finds likely duplicates and drafts replies, and it routes every suggestion through a human review queue. Its accuracy is **measured** against labels the project's maintainers applied.
 
-> 🚧 **Status: planning complete, implementation starting.** Progress is tracked in [docs/ROADMAP.md](docs/ROADMAP.md).
+> 🚧 **Status: Phase 0 (foundations) in progress.** Progress is tracked in [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## What it does
 
@@ -90,4 +90,4 @@ AI coding assistants help with this project (see [CLAUDE.md](CLAUDE.md) for the 
 
 ## Data and licence
 
-Issue data comes from the public [spring-projects/spring-boot](https://github.com/spring-projects/spring-boot) repository through the GitHub API. The repository stores issue numbers and labels for evaluation, not issue text. Licence: to be chosen in P0.11 (MIT suggested).
+Issue data comes from the public [spring-projects/spring-boot](https://github.com/spring-projects/spring-boot) repository through the GitHub API. The repository stores issue numbers and labels for evaluation, not issue text. Licence: [MIT](LICENSE).

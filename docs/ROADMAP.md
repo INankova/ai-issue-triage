@@ -8,7 +8,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
-| 0. Foundations | 17 | 14 | 8–12 h |
+| 0. Foundations | 17 | 15 | 8–12 h |
 | 1. Data ingestion | 7 | 0 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **14** | **≈ 100–140 h** |
+| **Core total** | **68** | **15** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -73,8 +73,8 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
   | ~1,100-token triage prompt with a short JSON answer | 17–32 s |
 
   With IntelliJ open, `./mvnw verify` (Testcontainers) and the model ran together. Available RAM stayed above 1 GB and page-file use stayed at ~5%, so nothing swapped.
-- [ ] **P0.11 Public GitHub repository:** create `ai-issue-triage` without an auto-generated README, push, choose a licence (MIT suggested), protect `main` (require a pull request and, once CI exists, a passing build), and add PR and issue templates.
-  *Done when:* the repo is online and the README and Mermaid diagrams render.
+- [x] **P0.11 Public GitHub repository:** create `ai-issue-triage` without an auto-generated README, push, choose a licence (MIT suggested), protect `main` (require a pull request and, once CI exists, a passing build), and add PR and issue templates.
+  *Done 2026-11-26:* public at [INankova/ai-issue-triage](https://github.com/INankova/ai-issue-triage) under the MIT licence. `main` requires a pull request; the passing-build check is added in P0.15. A PR template and two issue forms (bug, enhancement) are in `.github/`. Commits use the GitHub noreply address.
 - [x] **P0.12 Generate the Spring Boot skeleton** with [start.spring.io](https://start.spring.io) (exact settings in the setup guide):
   - Maven, Java 25, Boot 4.2.x
   - Dependencies: Spring Web, Validation, Spring Data JPA, PostgreSQL Driver, Flyway Migration, Actuator, Docker Compose Support, Testcontainers, Thymeleaf, Configuration Processor
