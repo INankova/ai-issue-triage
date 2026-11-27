@@ -8,6 +8,11 @@ spring:
       # Flyway owns the schema. Hibernate only checks at startup that the entities match it, and fails fast if not.
       ddl-auto: validate
 
+triage:
+  github:
+    # Read-only token from the GITHUB_TOKEN environment variable (P0.8). Unset means unauthenticated: 60 requests/hour.
+    token: ${GITHUB_TOKEN:}
+
 management:
   endpoint:
     health:

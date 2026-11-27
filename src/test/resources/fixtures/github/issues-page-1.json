@@ -1,0 +1,99 @@
+[
+  {
+    "url": "https://api.github.com/repos/spring-projects/spring-boot/issues/52951",
+    "node_id": "I_kwDOAGAU1s8AAAABjBDQVA",
+    "id": 6644879444,
+    "number": 52951,
+    "title": "Example title for #52951",
+    "body": "Example body for #52951.",
+    "user": {
+      "login": "example-user-1",
+      "id": 1001,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "id": 69230488,
+        "name": "type: task",
+        "color": "e3d9fc"
+      },
+      {
+        "id": 1320388431,
+        "name": "status: forward-port",
+        "color": "fef2c0"
+      }
+    ],
+    "state": "closed",
+    "state_reason": "completed",
+    "locked": false,
+    "comments": 0,
+    "created_at": "2026-11-27T10:46:27Z",
+    "updated_at": "2026-11-27T10:46:48Z",
+    "closed_at": "2026-11-27T10:46:48Z",
+    "author_association": "MEMBER",
+    "html_url": "https://github.com/spring-projects/spring-boot/issues/52951"
+  },
+  {
+    "url": "https://api.github.com/repos/spring-projects/spring-boot/issues/52939",
+    "node_id": "I_kwDOAGAU1s8AAAABiwkhwg",
+    "id": 6627598786,
+    "number": 52939,
+    "title": "Example title for #52939",
+    "body": "Example body for #52939.",
+    "user": {
+      "login": "example-user-2",
+      "id": 1002,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "id": 293438798,
+        "name": "status: waiting-for-triage",
+        "color": "fef2c0"
+      }
+    ],
+    "state": "open",
+    "state_reason": null,
+    "locked": false,
+    "comments": 4,
+    "created_at": "2026-11-26T13:23:13Z",
+    "updated_at": "2026-11-27T09:02:54Z",
+    "closed_at": null,
+    "author_association": "NONE",
+    "html_url": "https://github.com/spring-projects/spring-boot/issues/52939"
+  },
+  {
+    "url": "https://api.github.com/repos/spring-projects/spring-boot/issues/52925",
+    "node_id": "PR_kwDOAGAU1s8AAAABSDfk2g",
+    "id": 6622613368,
+    "number": 52925,
+    "title": "Example title for #52925",
+    "body": null,
+    "user": {
+      "login": "example-user-3",
+      "id": 1003,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "id": 69230488,
+        "name": "type: task",
+        "color": "e3d9fc"
+      }
+    ],
+    "state": "closed",
+    "state_reason": null,
+    "locked": false,
+    "comments": 0,
+    "created_at": "2026-11-26T08:29:44Z",
+    "updated_at": "2026-11-27T10:46:45Z",
+    "closed_at": "2026-11-27T10:46:45Z",
+    "author_association": "CONTRIBUTOR",
+    "html_url": "https://github.com/spring-projects/spring-boot/pull/52925",
+    "pull_request": {
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/pulls/52925",
+      "html_url": "https://github.com/spring-projects/spring-boot/pull/52925",
+      "merged_at": "2026-11-27T10:46:45Z"
+    }
+  }
+]

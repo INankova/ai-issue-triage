@@ -1,0 +1,70 @@
+[
+  {
+    "url": "https://api.github.com/repos/spring-projects/spring-boot/issues/52848",
+    "node_id": "I_kwDOAGAU1s8AAAABg_qzbA",
+    "id": 6509212524,
+    "number": 52848,
+    "title": "Example title for #52848",
+    "body": null,
+    "user": {
+      "login": "example-user-4",
+      "id": 1004,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "id": 69230488,
+        "name": "type: task",
+        "color": "e3d9fc"
+      }
+    ],
+    "state": "closed",
+    "state_reason": "completed",
+    "locked": false,
+    "comments": 0,
+    "created_at": "2026-11-20T10:03:34Z",
+    "updated_at": "2026-11-20T10:07:43Z",
+    "closed_at": "2026-11-20T10:07:43Z",
+    "author_association": "MEMBER",
+    "html_url": "https://github.com/spring-projects/spring-boot/issues/52848"
+  },
+  {
+    "url": "https://api.github.com/repos/spring-projects/spring-boot/issues/52822",
+    "node_id": "PR_kwDOAGAU1s8AAAABP7bp7g",
+    "id": 6452862114,
+    "number": 52822,
+    "title": "Example title for #52822",
+    "body": "Example body for #52822.",
+    "user": {
+      "login": "dependabot[bot]",
+      "id": 49699333,
+      "type": "Bot"
+    },
+    "labels": [
+      {
+        "id": 69230488,
+        "name": "type: task",
+        "color": "e3d9fc"
+      },
+      {
+        "id": 293438798,
+        "name": "status: waiting-for-triage",
+        "color": "fef2c0"
+      }
+    ],
+    "state": "closed",
+    "state_reason": null,
+    "locked": false,
+    "comments": 1,
+    "created_at": "2026-11-17T19:53:12Z",
+    "updated_at": "2026-11-21T00:06:11Z",
+    "closed_at": "2026-11-21T00:06:07Z",
+    "author_association": "CONTRIBUTOR",
+    "html_url": "https://github.com/spring-projects/spring-boot/pull/52822",
+    "pull_request": {
+      "url": "https://api.github.com/repos/spring-projects/spring-boot/pulls/52822",
+      "html_url": "https://github.com/spring-projects/spring-boot/pull/52822",
+      "merged_at": null
+    }
+  }
+]
