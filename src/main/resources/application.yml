@@ -1,6 +1,11 @@
 spring:
   application:
     name: ai-issue-triage
+  http:
+    clients:
+      # Without a read timeout a stuck request would hang forever instead of failing and being retried (P1.3).
+      connect-timeout: 10s
+      read-timeout: 30s
   jpa:
     # Don't keep a database session open while rendering views; load what a view needs in the service layer.
     open-in-view: false

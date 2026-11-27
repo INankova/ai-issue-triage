@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>25</java.version>
 		<archunit.version>1.5.1</archunit.version>
+		<resilience4j.version>2.4.0</resilience4j.version>
 		<jacoco.version>0.8.16</jacoco.version>
 		<spotless.version>3.12.0</spotless.version>
 	</properties>
@@ -35,6 +36,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-restclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.resilience4j</groupId>
+			<artifactId>resilience4j-retry</artifactId>
+			<version>${resilience4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

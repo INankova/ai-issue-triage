@@ -9,7 +9,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
 | 0. Foundations | 17 | 17 | 8–12 h |
-| 1. Data ingestion | 7 | 2 | 12–16 h |
+| 1. Data ingestion | 7 | 3 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
 | 4. Review UI | 6 | 0 | 10–14 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **19** | **≈ 100–140 h** |
+| **Core total** | **68** | **20** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -99,8 +99,13 @@ Design: [DESIGN §7](DESIGN.md#7-data-model), [§12](DESIGN.md#12-external-integ
   *Done 2026-11-26:* `V2__create_issue_and_import_run.sql` creates both tables. In the new `issues` module, `Issue` is a read-only entity (`@Immutable`, no setters), because GitHub is the source of truth and the sync will write rows with a SQL upsert (P1.4). `IssueRepository` exposes only `findByRepoAndNumber`. `IssueRepositoryTests` (`@DataJpaTest` + Testcontainers) inserts rows with SQL and checks every mapped column. Hibernate now validates the entities against the Flyway schema at startup (`ddl-auto: validate`). The `ImportRun` entity follows in P1.5, where it is first used.
 - [x] **P1.2 GitHub client:** Spring `RestClient`, typed records containing only the fields we use, the token header, pagination through the `Link` header, and error mapping. Test with MockRestServiceServer and JSON fixtures recorded from real responses.
   *Done 2026-11-27:* `GitHubClient` (in `ingestion.internal`) fetches issues newest first, following the `Link` header's next URL as-is, because GitHub pages with an opaque cursor. It stops at a limit and turns error statuses into `GitHubApiException` with GitHub's message. The token comes from `triage.github.token` (`GITHUB_TOKEN`) and is masked in `GitHubProperties.toString()`. `GitHubClientTests` cover two pages, the limit, field mapping (including bots and pull requests), a 401 error, the missing-token case and repo validation. The fixtures in `src/test/resources/fixtures/github/` were recorded without a token on 2026-11-27 and anonymised: titles, bodies and human logins are replaced.
-- [ ] **P1.3 Rate limits and retries:** read `x-ratelimit-*` headers and wait until the reset; Resilience4j retry for 5xx errors and timeouts; handle secondary limits (`403`/`429` with `retry-after`).
-  *Done when:* tests simulate hitting the limit and recovering.
+- [x] **P1.3 Rate limits and retries:** read `x-ratelimit-*` headers and wait until the reset; Resilience4j retry for 5xx errors and timeouts; handle secondary limits (`403`/`429` with `retry-after`).
+  *Done 2026-11-27:* on a rate-limited `403`/`429`, `GitHubClient` waits as GitHub asks, following its rate-limit guide:
+  - `retry-after` first;
+  - then `x-ratelimit-remaining: 0` with the reset time, plus 1 s for clock skew;
+  - otherwise one minute.
+
+  It waits at most three times per request. A `403` that is not a rate limit fails at once. Resilience4j (`resilience4j-retry` 2.4.0, configured in code) retries 5xx responses and network errors: three attempts, backing off 1 s and then 2 s. HTTP timeouts are set through `spring.http.clients.*` (connect 10 s, read 30 s). `GitHubClientRetryTests` use a fixed `Clock` and a recording `Sleeper`. They cover hitting the primary and secondary limits and recovering, giving up after the retries, a timeout, and a non-limit `403`.
 - [ ] **P1.4 Idempotent upsert and incremental sync:** `ON CONFLICT (github_id) DO UPDATE`, a `content_hash`, the `since` parameter with the last sync time, and pull requests skipped (they have a `pull_request` field).
   *Done when:* importing twice gives the same row count, and a changed issue gets a new hash.
 - [ ] **P1.5 Import command:** `POST /admin/imports` (or a command-line runner on an `import` profile) taking a repo and a limit, and writing `import_run` statistics.
