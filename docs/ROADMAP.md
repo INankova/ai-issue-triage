@@ -9,7 +9,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
 | 0. Foundations | 17 | 17 | 8–12 h |
-| 1. Data ingestion | 7 | 0 | 12–16 h |
+| 1. Data ingestion | 7 | 1 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
 | 4. Review UI | 6 | 0 | 10–14 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **17** | **≈ 100–140 h** |
+| **Core total** | **68** | **18** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -95,8 +95,8 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 
 Design: [DESIGN §7](DESIGN.md#7-data-model), [§12](DESIGN.md#12-external-integrations)
 
-- [ ] **P1.1 Issue schema and domain:** a migration for `issue` and `import_run`, a JPA entity and a repository, plus a repository test with Testcontainers.
-  *Done when:* the migration applies cleanly and the repository test passes.
+- [x] **P1.1 Issue schema and domain:** a migration for `issue` and `import_run`, a JPA entity and a repository, plus a repository test with Testcontainers.
+  *Done 2026-11-26:* `V2__create_issue_and_import_run.sql` creates both tables. In the new `issues` module, `Issue` is a read-only entity (`@Immutable`, no setters), because GitHub is the source of truth and the sync will write rows with a SQL upsert (P1.4). `IssueRepository` exposes only `findByRepoAndNumber`. `IssueRepositoryTests` (`@DataJpaTest` + Testcontainers) inserts rows with SQL and checks every mapped column. Hibernate now validates the entities against the Flyway schema at startup (`ddl-auto: validate`). The `ImportRun` entity follows in P1.5, where it is first used.
 - [ ] **P1.2 GitHub client:** Spring `RestClient`, typed records containing only the fields we use, the token header, pagination through the `Link` header, and error mapping. Test with MockRestServiceServer and JSON fixtures recorded from real responses.
   *Done when:* the tests cover two pages of results and an error response.
 - [ ] **P1.3 Rate limits and retries:** read `x-ratelimit-*` headers and wait until the reset; Resilience4j retry for 5xx errors and timeouts; handle secondary limits (`403`/`429` with `retry-after`).
