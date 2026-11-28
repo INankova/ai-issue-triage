@@ -9,7 +9,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
 | 0. Foundations | 17 | 17 | 8–12 h |
-| 1. Data ingestion | 7 | 5 | 12–16 h |
+| 1. Data ingestion | 7 | 6 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
 | 4. Review UI | 6 | 0 | 10–14 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **22** | **≈ 100–140 h** |
+| **Core total** | **68** | **23** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -118,8 +118,14 @@ Design: [DESIGN §7](DESIGN.md#7-data-model), [§12](DESIGN.md#12-external-integ
   *Done 2026-11-28:* a command-line runner (`ImportCommand`, `import` profile, no web server). It is safer than an unprotected admin endpoint before P4.5, and it suits a batch job. It takes `--repo` (default `spring-projects/spring-boot`) and `--limit` (default 5000). The limit counts issues; pull requests met on the way don't use it up. `IssueImportService` saves the `ImportRun` as `RUNNING` and finishes it as `SUCCEEDED` or `FAILED` with the error. A shared `Clock` bean is the single source of "now".
 
   The first real import stored 5,000 issues (#46734–#52970, created 2025-08-08 to 2026-11-27; 4,298 have a `type:` label) out of 6,112 entries seen, in 79 s. It used 62 of the 5,000 hourly requests, with no retries or rate-limit waits.
-- [ ] **P1.6 Comments for the duplicate subset:** fetch comments and timeline cross-references only for issues labelled `status: duplicate`.
-  *Done when:* comments are stored for that subset and the count is logged.
+- [x] **P1.6 Comments for the duplicate subset:** fetch comments and timeline cross-references only for issues labelled `status: duplicate`.
+  *Done 2026-11-28:*
+  - `V3` adds `issue_comment` and `issue_cross_reference`.
+  - `DuplicateDiscussionSync` fetches comments and timeline cross-references for issues labelled `status: duplicate` or closed with `state_reason = duplicate`. `IssueDiscussionWriter` upserts them.
+  - The import command runs it after the import and logs the counts.
+  - The real run stored **259 comments for 140 duplicates**, matching their `comments_count`.
+
+  **Cross-references: 0.** GitHub leaves `cross-referenced` timeline events out for our fine-grained, public read-only token (REST and GraphQL alike). The same request without a token returns them. The code is in place and tested with a recorded response. Whether to switch to a classic no-scope token is decided in P2.4, based on how many pairs the comments alone give.
 - [ ] **P1.7 Data exploration report:** `docs/DATA.md` covering label distribution, bot share, conflicting labels, body lengths and issues per year, with the SQL queries included.
   *Done when:* the report is committed and its findings feed P2.1.
 

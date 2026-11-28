@@ -1,5 +1,7 @@
 package io.github.inankova.triage.ingestion.internal;
 
+import io.github.inankova.triage.ingestion.DiscussionSyncResult;
+import io.github.inankova.triage.ingestion.DuplicateDiscussionSync;
 import io.github.inankova.triage.ingestion.ImportRun;
 import io.github.inankova.triage.ingestion.IssueImportService;
 import java.time.Duration;
@@ -11,14 +13,15 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * The import command (ROADMAP P1.5). It exists only with the {@code import} profile, which also turns the web server
- * off ({@code application-import.yml}), so the app imports and then exits:
+ * The import command (ROADMAP P1.5, P1.6). It exists only with the {@code import} profile, which also turns the web
+ * server off ({@code application-import.yml}), so the app imports and then exits:
  *
  * <pre>
  * .\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=import" "-Dspring-boot.run.arguments=--limit=5000"
  * </pre>
  *
- * <p>A failed import throws, so the process ends with a non-zero exit code.
+ * <p>It imports the issues, then fetches the comments and cross-references of the duplicates among them. A failure
+ * throws, so the process ends with a non-zero exit code.
  */
 @Component
 @Profile("import")
@@ -28,8 +31,11 @@ class ImportCommand implements ApplicationRunner {
 
     private final IssueImportService imports;
 
-    ImportCommand(IssueImportService imports) {
+    private final DuplicateDiscussionSync discussions;
+
+    ImportCommand(IssueImportService imports, DuplicateDiscussionSync discussions) {
         this.imports = imports;
+        this.discussions = discussions;
     }
 
     @Override
@@ -44,5 +50,12 @@ class ImportCommand implements ApplicationRunner {
                 run.getIssuesSeen(),
                 Duration.between(run.getStartedAt(), run.getFinishedAt()).toSeconds(),
                 run.getId());
+
+        DiscussionSyncResult discussion = discussions.syncDuplicates(arguments.repo());
+        log.info(
+                "Fetched {} comments and {} cross-references for {} duplicate issues",
+                discussion.comments(),
+                discussion.crossReferences(),
+                discussion.issues());
     }
 }

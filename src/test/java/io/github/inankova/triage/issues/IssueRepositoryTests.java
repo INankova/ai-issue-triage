@@ -87,6 +87,27 @@ class IssueRepositoryTests {
                 .isEmpty();
     }
 
+    @Test
+    void findsDuplicatesByLabelOrByStateReason() {
+        insertClosedDuplicateIssue(); // #101: labelled status: duplicate
+        insertOpenBotIssueWithoutBodyOrLabels(); // #102: not a duplicate
+        jdbc.sql("""
+                INSERT INTO issue (github_id, repo, number, title, body, state, state_reason, labels,
+                                   author_login, author_is_bot, html_url, comments_count,
+                                   created_at, updated_at, closed_at, content_hash, synced_at)
+                VALUES (9000103, 'spring-projects/spring-boot', 103, 'Closed as duplicate, no label', NULL,
+                        'CLOSED', 'duplicate', ARRAY['type: bug'], 'octocat', false,
+                        'https://github.com/spring-projects/spring-boot/issues/103', 1,
+                        '2025-03-05T09:00:00Z', '2025-03-06T09:00:00Z', '2025-03-06T09:00:00Z',
+                        'hash-103', '2026-11-26T12:00:00Z')
+                """).update();
+
+        assertThat(issues.findDuplicates(SPRING_BOOT))
+                .extracting(Issue::getNumber)
+                .containsExactly(101, 103);
+        assertThat(issues.findDuplicates("spring-projects/spring-framework")).isEmpty();
+    }
+
     private void insertClosedDuplicateIssue() {
         jdbc.sql("""
                 INSERT INTO issue (github_id, repo, number, title, body, state, state_reason, labels,

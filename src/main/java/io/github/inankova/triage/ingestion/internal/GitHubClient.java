@@ -66,6 +66,12 @@ public class GitHubClient {
     private static final ParameterizedTypeReference<List<GitHubIssue>> ISSUE_LIST =
             new ParameterizedTypeReference<>() {};
 
+    private static final ParameterizedTypeReference<List<GitHubComment>> COMMENT_LIST =
+            new ParameterizedTypeReference<>() {};
+
+    private static final ParameterizedTypeReference<List<GitHubTimelineEvent>> TIMELINE_LIST =
+            new ParameterizedTypeReference<>() {};
+
     private final RestClient restClient;
 
     private final URI baseUrl;
@@ -143,14 +149,32 @@ public class GitHubClient {
         return fetchPages(issuesUri(repo, "updated", "asc", since), Integer.MAX_VALUE);
     }
 
+    /**
+     * Fetches all comments of an issue, oldest first (P1.6).
+     *
+     * @throws GitHubApiException if GitHub answers with an error status, after any retries
+     */
+    public List<GitHubComment> fetchComments(String repo, int number) {
+        return fetchAll(issueUri(repo, number, "comments"), COMMENT_LIST);
+    }
+
+    /**
+     * Fetches the whole timeline of an issue: labels, comments, cross-references and other events, oldest first.
+     *
+     * @throws GitHubApiException if GitHub answers with an error status, after any retries
+     */
+    public List<GitHubTimelineEvent> fetchTimeline(String repo, int number) {
+        return fetchAll(issueUri(repo, number, "timeline"), TIMELINE_LIST);
+    }
+
     /** Follows pages until {@code issueLimit} real issues are collected; pull requests met on the way are kept. */
     private List<GitHubIssue> fetchPages(URI firstPage, int issueLimit) {
         List<GitHubIssue> fetched = new ArrayList<>();
         int issueCount = 0;
         URI next = firstPage;
         while (next != null && issueCount < issueLimit) {
-            Page page = fetchPage(next);
-            for (GitHubIssue entry : page.issues()) {
+            Page<GitHubIssue> page = fetchPage(next, ISSUE_LIST);
+            for (GitHubIssue entry : page.items()) {
                 if (issueCount == issueLimit) {
                     break; // enough issues: drop the rest of this page
                 }
@@ -164,11 +188,20 @@ public class GitHubClient {
         return List.copyOf(fetched);
     }
 
-    private URI issuesUri(String repo, String sort, String direction, Instant since) {
-        Matcher matcher = REPO.matcher(repo);
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException("Expected a repository as owner/name, got: " + repo);
+    /** Follows every page of a list. */
+    private <T> List<T> fetchAll(URI firstPage, ParameterizedTypeReference<List<T>> type) {
+        List<T> fetched = new ArrayList<>();
+        URI next = firstPage;
+        while (next != null) {
+            Page<T> page = fetchPage(next, type);
+            fetched.addAll(page.items());
+            next = page.next();
         }
+        return List.copyOf(fetched);
+    }
+
+    private URI issuesUri(String repo, String sort, String direction, Instant since) {
+        Matcher matcher = repoMatcher(repo);
         UriComponentsBuilder uri = UriComponentsBuilder.fromUri(baseUrl)
                 .path("/repos/{owner}/{name}/issues")
                 .queryParam("state", "all") // closed issues carry the maintainers' final labels
@@ -180,15 +213,32 @@ public class GitHubClient {
         return uri.queryParam("per_page", PAGE_SIZE).build(matcher.group(1), matcher.group(2));
     }
 
-    /** Resilience4j retries transient failures; rate limits are handled one level down. */
-    private Page fetchPage(URI uri) {
-        return retry.executeSupplier(() -> fetchPageWithinRateLimits(uri));
+    /** A list under one issue, such as {@code /repos/{owner}/{name}/issues/{number}/comments}. */
+    private URI issueUri(String repo, int number, String list) {
+        Matcher matcher = repoMatcher(repo);
+        return UriComponentsBuilder.fromUri(baseUrl)
+                .path("/repos/{owner}/{name}/issues/{number}/" + list) // list is one of our own constants
+                .queryParam("per_page", PAGE_SIZE)
+                .build(matcher.group(1), matcher.group(2), number);
     }
 
-    private Page fetchPageWithinRateLimits(URI uri) {
+    private static Matcher repoMatcher(String repo) {
+        Matcher matcher = REPO.matcher(repo);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Expected a repository as owner/name, got: " + repo);
+        }
+        return matcher;
+    }
+
+    /** Resilience4j retries transient failures; rate limits are handled one level down. */
+    private <T> Page<T> fetchPage(URI uri, ParameterizedTypeReference<List<T>> type) {
+        return retry.executeSupplier(() -> fetchPageWithinRateLimits(uri, type));
+    }
+
+    private <T> Page<T> fetchPageWithinRateLimits(URI uri, ParameterizedTypeReference<List<T>> type) {
         for (int waits = 0; ; waits++) {
             try {
-                return requestPage(uri);
+                return requestPage(uri, type);
             } catch (GitHubRateLimitException e) {
                 if (waits == MAX_RATE_LIMIT_WAITS) {
                     throw e;
@@ -203,7 +253,7 @@ public class GitHubClient {
     }
 
     /** Requests one page. The URI is used exactly as given, so the cursor in a next link isn't re-encoded. */
-    private Page requestPage(URI uri) {
+    private <T> Page<T> requestPage(URI uri, ParameterizedTypeReference<List<T>> type) {
         return restClient.get().uri(uri).exchange((request, response) -> {
             if (response.getStatusCode().isError()) {
                 int status = response.getStatusCode().value();
@@ -214,8 +264,8 @@ public class GitHubClient {
                 }
                 throw new GitHubApiException(status, message);
             }
-            List<GitHubIssue> issues = response.bodyTo(ISSUE_LIST);
-            return new Page(issues == null ? List.of() : issues, nextLink(response.getHeaders()));
+            List<T> items = response.bodyTo(type);
+            return new Page<>(items == null ? List.of() : items, nextLink(response.getHeaders()));
         });
     }
 
@@ -277,7 +327,7 @@ public class GitHubClient {
     }
 
     /** One page of results; {@code next} is null on the last page. */
-    private record Page(List<GitHubIssue> issues, URI next) {}
+    private record Page<T>(List<T> items, URI next) {}
 
     /** Waits for a while; tests replace it so that waiting minutes for a rate limit takes no time. */
     @FunctionalInterface

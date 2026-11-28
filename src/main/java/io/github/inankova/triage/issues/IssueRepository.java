@@ -1,6 +1,7 @@
 package io.github.inankova.triage.issues;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
@@ -20,4 +21,16 @@ public interface IssueRepository extends Repository<Issue, Long> {
      */
     @Query("select max(i.updatedAt) from Issue i where i.repo = :repo")
     Optional<Instant> findNewestUpdatedAt(String repo);
+
+    /**
+     * Issues of a repository that maintainers marked as duplicates, by the {@code status: duplicate} label or by
+     * closing them with the reason {@code duplicate} (EVALUATION §2.3). Native SQL, because JPQL has no operator for
+     * "this array contains that value".
+     */
+    @Query(value = """
+                    SELECT * FROM issue
+                    WHERE repo = :repo AND ('status: duplicate' = ANY (labels) OR state_reason = 'duplicate')
+                    ORDER BY number
+                    """, nativeQuery = true)
+    List<Issue> findDuplicates(String repo);
 }
