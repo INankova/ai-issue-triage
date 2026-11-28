@@ -39,6 +39,7 @@ Fill these in as they become available.
 |---|---|
 | Build and test | `.\mvnw.cmd verify` |
 | Run locally | `.\mvnw.cmd spring-boot:run` (starts `compose.yaml` automatically) |
+| Import issues (real GitHub calls, needs `GITHUB_TOKEN`) | `.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=import" "-Dspring-boot.run.arguments=--limit=5000"` |
 | Format (palantir-java-format; `verify` fails on unformatted code) | `.\mvnw.cmd spotless:apply` |
 | Coverage report | `.\mvnw.cmd verify`, then open `target/site/jacoco/index.html` |
 | Eval | see [docs/EVALUATION.md](docs/EVALUATION.md) §7 |

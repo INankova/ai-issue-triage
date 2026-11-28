@@ -1,0 +1,5 @@
+# The "import" profile runs the one-off import command (ROADMAP P1.5, ImportCommand).
+spring:
+  main:
+    # No web server: the app imports, then exits.
+    web-application-type: none

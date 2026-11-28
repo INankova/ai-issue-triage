@@ -83,6 +83,22 @@ class GitHubClientTests {
     }
 
     @Test
+    void theLimitCountsIssuesNotThePullRequestsMetOnTheWay() {
+        github.expect(requestTo(FIRST_PAGE))
+                .andRespond(withSuccess(fixture("issues-page-1.json"), MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.LINK, PAGE_1_LINK));
+        github.expect(requestTo(SECOND_PAGE))
+                .andRespond(withSuccess(fixture("issues-page-2.json"), MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.LINK, PAGE_2_LINK));
+
+        // Page 1 holds two issues and pull request #52925, so a third issue means reading on into page 2.
+        List<GitHubIssue> issues = client("test-token").fetchIssues(REPO, 3);
+
+        assertThat(issues).extracting(GitHubIssue::number).containsExactly(52951, 52939, 52925, 52848);
+        github.verify();
+    }
+
+    @Test
     void fetchesIssuesUpdatedSinceAGivenTimeOldestUpdateFirst() {
         github.expect(requestTo("https://api.github.com/repos/spring-projects/spring-boot/issues"
                         + "?state=all&sort=updated&direction=asc&since=2026-11-27T10:46:48Z&per_page=100"))
