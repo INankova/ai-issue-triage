@@ -23,7 +23,7 @@ public record GitHubIssue(
         String state,
         String stateReason,
         List<Label> labels,
-        User user,
+        GitHubUser user,
         String htmlUrl,
         int comments,
         Instant createdAt,
@@ -33,15 +33,6 @@ public record GitHubIssue(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Label(String name) {}
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public record User(String login, String type) {
-
-        /** GitHub Apps such as Dependabot have the type {@code Bot}. */
-        public boolean isBot() {
-            return "Bot".equals(type);
-        }
-    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record PullRequestRef(String url) {}

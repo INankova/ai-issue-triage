@@ -154,6 +154,7 @@ All schema changes go through Flyway migrations (`src/main/resources/db/migratio
 |---|---|---|
 | `issue` | `id`, `github_id` (unique), `repo`, `number`, `title`, `body`, `state`, `state_reason`, `labels text[]`, `author_login`, `author_is_bot`, `html_url`, `comments_count`, `created_at`, `updated_at`, `closed_at`, `content_hash`, `synced_at` | Upserted with `INSERT … ON CONFLICT (github_id) DO UPDATE`. `content_hash` is the SHA-256 of title and body only, the text the model reads; labels are ground truth and don't change it |
 | `issue_comment` | `id`, `issue_id`, `github_id`, `author_login`, `author_association`, `body`, `created_at` | Fetched only for issues needed for ground truth or RAG |
+| `issue_cross_reference` | `id`, `issue_id`, `source_repo`, `source_number`, `source_is_pull_request`, `created_at` | Issues and pull requests that mentioned an issue (timeline `cross-referenced` events); one row per source |
 | `ground_truth` | `issue_id`, `category`, `is_regression`, `needs_info`, `duplicate_of_issue_id`, `source`, `mapped_at` | Derived from labels. Kept separate so prediction code never reads it |
 | `import_run` | `id`, `repo`, `started_at`, `finished_at`, `issues_seen`, `issues_upserted`, `status`, `error` | Import history and statistics |
 | `issue_embedding` | `issue_id`, `model`, `embedding vector(N)`, `created_at` | HNSW index with `vector_cosine_ops`. N is fixed by the chosen model; changing models means a new migration |

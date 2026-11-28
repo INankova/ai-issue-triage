@@ -112,6 +112,44 @@ class GitHubClientTests {
     }
 
     @Test
+    void fetchesTheCommentsOfAnIssue() {
+        github.expect(requestTo(
+                        "https://api.github.com/repos/spring-projects/spring-boot/issues/52634/comments?per_page=100"))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer test-token"))
+                .andRespond(withSuccess(fixture("comments-52634.json"), MediaType.APPLICATION_JSON));
+
+        List<GitHubComment> comments = client("test-token").fetchComments(REPO, 52634);
+
+        assertThat(comments).hasSize(4);
+        GitHubComment first = comments.get(0);
+        assertThat(first.id()).isEqualTo(6_686_781_820L);
+        assertThat(first.user().login()).isEqualTo("example-user-7");
+        assertThat(first.authorAssociation()).isEqualTo("CONTRIBUTOR");
+        assertThat(first.body()).isEqualTo("Example comment 1.");
+        assertThat(first.createdAt()).isEqualTo(Instant.parse("2026-11-06T14:09:03Z"));
+        assertThat(comments.get(3).authorAssociation()).isEqualTo("MEMBER");
+    }
+
+    @Test
+    void fetchesTheTimelineOfAnIssueWithItsCrossReferences() {
+        github.expect(requestTo(
+                        "https://api.github.com/repos/spring-projects/spring-boot/issues/52634/timeline?per_page=100"))
+                .andRespond(withSuccess(fixture("timeline-52634.json"), MediaType.APPLICATION_JSON));
+
+        List<GitHubTimelineEvent> timeline = client("test-token").fetchTimeline(REPO, 52634);
+
+        assertThat(timeline).hasSize(19);
+        assertThat(timeline.get(0).event()).isEqualTo("labeled");
+        assertThat(timeline.get(0).source()).isNull();
+        GitHubTimelineEvent crossReference = timeline.get(1);
+        assertThat(crossReference.event()).isEqualTo("cross-referenced");
+        assertThat(crossReference.createdAt()).isEqualTo(Instant.parse("2026-11-06T03:28:10Z"));
+        assertThat(crossReference.source().issue().repository().fullName()).isEqualTo("apache/grails-core");
+        assertThat(crossReference.source().issue().number()).isEqualTo(16871);
+        assertThat(crossReference.source().issue().pullRequest()).isNotNull();
+    }
+
+    @Test
     void mapsTheFieldsWeUseFromARecordedResponse() {
         github.expect(requestTo(FIRST_PAGE))
                 .andRespond(withSuccess(fixture("issues-page-1.json"), MediaType.APPLICATION_JSON));

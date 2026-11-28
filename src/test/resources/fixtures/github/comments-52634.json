@@ -1,0 +1,54 @@
+[
+  {
+    "url": "https://api.github.com/repos/spring-projects/spring-boot/issues/comments/6686781820",
+    "id": 6686781820,
+    "node_id": "IC_kwDOAGAU1s8AAAABjpAxfA",
+    "user": {
+      "login": "example-user-7",
+      "type": "User"
+    },
+    "created_at": "2026-11-06T14:09:03Z",
+    "updated_at": "2026-11-06T14:09:03Z",
+    "author_association": "CONTRIBUTOR",
+    "body": "Example comment 1."
+  },
+  {
+    "url": "https://api.github.com/repos/spring-projects/spring-boot/issues/comments/6693185036",
+    "id": 6693185036,
+    "node_id": "IC_kwDOAGAU1s8AAAABjvHmDA",
+    "user": {
+      "login": "example-user-7",
+      "type": "User"
+    },
+    "created_at": "2026-11-06T19:10:34Z",
+    "updated_at": "2026-11-06T19:10:34Z",
+    "author_association": "CONTRIBUTOR",
+    "body": "Example comment 2."
+  },
+  {
+    "url": "https://api.github.com/repos/spring-projects/spring-boot/issues/comments/6700198442",
+    "id": 6700198442,
+    "node_id": "IC_kwDOAGAU1s8AAAABj1zqKg",
+    "user": {
+      "login": "example-user-7",
+      "type": "User"
+    },
+    "created_at": "2026-11-07T01:16:06Z",
+    "updated_at": "2026-11-07T01:16:06Z",
+    "author_association": "CONTRIBUTOR",
+    "body": "Example comment 3."
+  },
+  {
+    "url": "https://api.github.com/repos/spring-projects/spring-boot/issues/comments/6841980953",
+    "id": 6841980953,
+    "node_id": "IC_kwDOAGAU1s8AAAABl9BYGQ",
+    "user": {
+      "login": "example-user-3",
+      "type": "User"
+    },
+    "created_at": "2026-11-13T02:26:30Z",
+    "updated_at": "2026-11-13T02:26:30Z",
+    "author_association": "MEMBER",
+    "body": "Example comment 4."
+  }
+]

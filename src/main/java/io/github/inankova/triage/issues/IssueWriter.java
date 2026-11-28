@@ -1,8 +1,7 @@
 package io.github.inankova.triage.issues;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import static io.github.inankova.triage.issues.SqlTimestamps.utc;
+
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 
@@ -67,10 +66,5 @@ public class IssueWriter {
                 .param("closedAt", utc(issue.closedAt()))
                 .param("contentHash", ContentHash.of(issue.title(), issue.body()))
                 .update();
-    }
-
-    /** The PostgreSQL driver accepts {@code OffsetDateTime} for timestamptz, but not {@code Instant}. */
-    private static OffsetDateTime utc(Instant instant) {
-        return instant == null ? null : instant.atOffset(ZoneOffset.UTC);
     }
 }
