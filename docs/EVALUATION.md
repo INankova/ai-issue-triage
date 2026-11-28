@@ -34,6 +34,8 @@ The data is split **by time** to avoid leakage and to imitate real use: we train
 
 Target test mix (adjust to the real distribution found in P1.7): BUG 80 · ENHANCEMENT 70 · DOCUMENTATION 50 · QUESTION 50 · INVALID 50.
 
+**P1.7 finding** ([DATA](DATA.md)): the 5,000-issue snapshot has 916 usable issues. With precedence applied, that is BUG 247, INVALID 249, ENHANCEMENT 243, DOCUMENTATION 149 and only 28 QUESTION. The newest 300 contain just 2 questions, so QUESTION can't reach 50. Import a longer history before P2.3, then set the final mix from the real counts. If QUESTION stays rare, report it separately with its confidence interval.
+
 > Iterating on the test set is overfitting by another name. If a prompt was tuned while looking at test results, those results no longer count.
 
 ### 2.3 Duplicate pairs (v1)

@@ -9,7 +9,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
 | 0. Foundations | 17 | 17 | 8–12 h |
-| 1. Data ingestion | 7 | 6 | 12–16 h |
+| 1. Data ingestion | 7 | 7 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
 | 4. Review UI | 6 | 0 | 10–14 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **23** | **≈ 100–140 h** |
+| **Core total** | **68** | **24** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -126,8 +126,15 @@ Design: [DESIGN §7](DESIGN.md#7-data-model), [§12](DESIGN.md#12-external-integ
   - The real run stored **259 comments for 140 duplicates**, matching their `comments_count`.
 
   **Cross-references: 0.** GitHub leaves `cross-referenced` timeline events out for our fine-grained, public read-only token (REST and GraphQL alike). The same request without a token returns them. The code is in place and tested with a recorded response. Whether to switch to a classic no-scope token is decided in P2.4, based on how many pairs the comments alone give.
-- [ ] **P1.7 Data exploration report:** `docs/DATA.md` covering label distribution, bot share, conflicting labels, body lengths and issues per year, with the SQL queries included.
-  *Done when:* the report is committed and its findings feed P2.1.
+- [x] **P1.7 Data exploration report:** `docs/DATA.md` covering label distribution, bot share, conflicting labels, body lengths and issues per year, with the SQL queries included.
+  *Done 2026-11-28:* [DATA.md](DATA.md) covers the 5,000-issue snapshot, with every query included. Findings that feed Phase 2:
+  - only 916 issues are usable (BUG 247, INVALID 249, ENHANCEMENT 243, DOCUMENTATION 149, QUESTION 28);
+  - the `needsInfo` label proxy has no data;
+  - no issue has a bot author;
+  - the 18 conflicts are all settled by the planned precedence;
+  - only about 20 duplicate pairs come from comment rule 1.
+
+  The main recommendation is to import a longer history before P2.1. EVALUATION §2.2 and DESIGN §8.1 note the consequences.
 
 ## Phase 2: Ground truth and evaluation dataset (10–14 h)
 

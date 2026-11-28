@@ -195,7 +195,7 @@ Mapping from Spring Boot labels (all labels verified to exist on 2026-11-26):
 | `QUESTION` | `for: stackoverflow` |
 | `INVALID` | `status: invalid` |
 | `regression = true` | `type: regression` |
-| `needsInfo = true` | `status: waiting-for-feedback` (a proxy: maintainers add it *after* asking for information) |
+| `needsInfo = true` | `status: waiting-for-feedback` (a proxy: maintainers add it *after* asking for information). P1.7 found it on no issue in the snapshot, because maintainers remove it once feedback arrives. Usable ground truth needs the label history from timelines, so P2.1 decides whether `needsInfo` stays in v1 ([DATA](DATA.md)) |
 | duplicate pair | `status: duplicate` plus a reference to the original issue ([EVALUATION §2.3](EVALUATION.md)) |
 
 **Excluded from all datasets:** pull requests, bot authors, and issues labelled `type: task`, `type: dependency-upgrade`, `type: epic`, `status: forward-port` or `status: back-port`. Most of these are created automatically.

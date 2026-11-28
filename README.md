@@ -84,6 +84,7 @@ The reason behind each choice is recorded in [docs/adr](docs/adr/).
 | [DESIGN](docs/DESIGN.md) | Goals, architecture, data model, AI pipeline, security, cost |
 | [ROADMAP](docs/ROADMAP.md) | Step-by-step plan with progress |
 | [EVALUATION](docs/EVALUATION.md) | Datasets, metrics, baselines, experiment log |
+| [DATA](docs/DATA.md) | What the imported issues look like: labels, exclusions, conflicts, text lengths, duplicates |
 | [ADRs](docs/adr/) | Architecture decisions and their trade-offs |
 | [RESOURCES](docs/RESOURCES.md) | Curated official documentation |
 
