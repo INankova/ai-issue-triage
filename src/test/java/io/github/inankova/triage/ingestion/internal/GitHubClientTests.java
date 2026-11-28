@@ -83,6 +83,19 @@ class GitHubClientTests {
     }
 
     @Test
+    void fetchesIssuesUpdatedSinceAGivenTimeOldestUpdateFirst() {
+        github.expect(requestTo("https://api.github.com/repos/spring-projects/spring-boot/issues"
+                        + "?state=all&sort=updated&direction=asc&since=2026-11-27T10:46:48Z&per_page=100"))
+                .andRespond(withSuccess(fixture("issues-page-1.json"), MediaType.APPLICATION_JSON));
+
+        List<GitHubIssue> issues =
+                client("test-token").fetchIssuesUpdatedSince(REPO, Instant.parse("2026-11-27T10:46:48Z"));
+
+        assertThat(issues).hasSize(3);
+        github.verify();
+    }
+
+    @Test
     void mapsTheFieldsWeUseFromARecordedResponse() {
         github.expect(requestTo(FIRST_PAGE))
                 .andRespond(withSuccess(fixture("issues-page-1.json"), MediaType.APPLICATION_JSON));

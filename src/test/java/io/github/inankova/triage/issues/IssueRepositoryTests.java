@@ -77,6 +77,16 @@ class IssueRepositoryTests {
                 .isEmpty();
     }
 
+    @Test
+    void findsTheNewestUpdateTimeOfARepoForTheNextIncrementalSync() {
+        insertClosedDuplicateIssue(); // updated 2025-03-04T08:00:00Z
+        insertOpenBotIssueWithoutBodyOrLabels(); // updated 2025-03-02T09:00:00Z
+
+        assertThat(issues.findNewestUpdatedAt(SPRING_BOOT)).contains(Instant.parse("2025-03-04T08:00:00Z"));
+        assertThat(issues.findNewestUpdatedAt("spring-projects/spring-framework"))
+                .isEmpty();
+    }
+
     private void insertClosedDuplicateIssue() {
         jdbc.sql("""
                 INSERT INTO issue (github_id, repo, number, title, body, state, state_reason, labels,

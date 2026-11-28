@@ -152,7 +152,7 @@ All schema changes go through Flyway migrations (`src/main/resources/db/migratio
 
 | Table | Key columns | Notes |
 |---|---|---|
-| `issue` | `id`, `github_id` (unique), `repo`, `number`, `title`, `body`, `state`, `state_reason`, `labels text[]`, `author_login`, `author_is_bot`, `html_url`, `comments_count`, `created_at`, `updated_at`, `closed_at`, `content_hash`, `synced_at` | Upserted with `INSERT … ON CONFLICT (github_id) DO UPDATE` |
+| `issue` | `id`, `github_id` (unique), `repo`, `number`, `title`, `body`, `state`, `state_reason`, `labels text[]`, `author_login`, `author_is_bot`, `html_url`, `comments_count`, `created_at`, `updated_at`, `closed_at`, `content_hash`, `synced_at` | Upserted with `INSERT … ON CONFLICT (github_id) DO UPDATE`. `content_hash` is the SHA-256 of title and body only, the text the model reads; labels are ground truth and don't change it |
 | `issue_comment` | `id`, `issue_id`, `github_id`, `author_login`, `author_association`, `body`, `created_at` | Fetched only for issues needed for ground truth or RAG |
 | `ground_truth` | `issue_id`, `category`, `is_regression`, `needs_info`, `duplicate_of_issue_id`, `source`, `mapped_at` | Derived from labels. Kept separate so prediction code never reads it |
 | `import_run` | `id`, `repo`, `started_at`, `finished_at`, `issues_seen`, `issues_upserted`, `status`, `error` | Import history and statistics |
@@ -277,7 +277,7 @@ The design is two-stage: cheap retrieval first, an expensive judgement only on a
 
 **GitHub REST API**
 - Spring `RestClient` with token authentication.
-- Pagination follows the `Link` header; `since` drives incremental sync.
+- Pagination follows the `Link` header; `since` drives incremental sync. It is set to the newest `updated_at` already stored, so it comes from GitHub's clock, and results come oldest update first, so a sync that stops halfway can resume without gaps.
 - Use conditional requests (`If-None-Match` with an ETag) where it helps. GitHub documents that authenticated `304` responses don't count against the primary rate limit.
 - Rate limits: read `x-ratelimit-remaining` and `x-ratelimit-reset` and pause until the reset. Handle secondary limits (`403`/`429` with `retry-after`).
 
