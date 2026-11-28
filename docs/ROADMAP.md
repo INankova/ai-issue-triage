@@ -9,7 +9,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | Phase | Steps | Done | Estimate |
 |---|---|---|---|
 | 0. Foundations | 17 | 17 | 8–12 h |
-| 1. Data ingestion | 7 | 3 | 12–16 h |
+| 1. Data ingestion | 7 | 4 | 12–16 h |
 | 2. Ground truth and eval dataset | 6 | 0 | 10–14 h |
 | 3. LLM classification ⭐ | 9 | 0 | 14–18 h |
 | 4. Review UI | 6 | 0 | 10–14 h |
@@ -17,7 +17,7 @@ The step-by-step plan for AI Issue Triage, and the **single source of truth for 
 | 6. Jobs, webhooks, resilience | 6 | 0 | 12–16 h |
 | 7. Suggested replies | 4 | 0 | 10–14 h |
 | 8. Polish and launch | 7 | 0 | 14–20 h |
-| **Core total** | **68** | **20** | **≈ 100–140 h** |
+| **Core total** | **68** | **21** | **≈ 100–140 h** |
 | 9. Stretch goals (pick 1–3) | 9 | 0 | 5–20 h each |
 | 10. Job-search packaging | 5 | 0 | 4–6 h |
 
@@ -106,8 +106,14 @@ Design: [DESIGN §7](DESIGN.md#7-data-model), [§12](DESIGN.md#12-external-integ
   - otherwise one minute.
 
   It waits at most three times per request. A `403` that is not a rate limit fails at once. Resilience4j (`resilience4j-retry` 2.4.0, configured in code) retries 5xx responses and network errors: three attempts, backing off 1 s and then 2 s. HTTP timeouts are set through `spring.http.clients.*` (connect 10 s, read 30 s). `GitHubClientRetryTests` use a fixed `Clock` and a recording `Sleeper`. They cover hitting the primary and secondary limits and recovering, giving up after the retries, a timeout, and a non-limit `403`.
-- [ ] **P1.4 Idempotent upsert and incremental sync:** `ON CONFLICT (github_id) DO UPDATE`, a `content_hash`, the `since` parameter with the last sync time, and pull requests skipped (they have a `pull_request` field).
-  *Done when:* importing twice gives the same row count, and a changed issue gets a new hash.
+- [x] **P1.4 Idempotent upsert and incremental sync:** `ON CONFLICT (github_id) DO UPDATE`, a `content_hash`, the `since` parameter with the last sync time, and pull requests skipped (they have a `pull_request` field).
+  *Done 2026-11-27:*
+  - `IssueWriter` (the only writer of `issue`, using `JdbcClient`) upserts an `IssueSnapshot`.
+  - `content_hash` is the SHA-256 of title, a NUL character and body: only what the model reads, so new labels don't trigger re-classification.
+  - `IssueSync` offers `importRecent(repo, limit)` and `syncChanges(repo)`. Both skip pull requests and return `SyncResult(seen, upserted)`.
+  - `syncChanges` asks GitHub for issues updated since the newest stored `updated_at` (GitHub's clock), oldest first.
+
+  `IssueSyncTests` (Testcontainers plus recorded GitHub responses) show that importing twice keeps 3 rows out of 5 entries, and that an edited title gets a new hash while the other issues keep theirs. `ContentHashTests` and `IssueWriterTests` cover the hash and the upsert.
 - [ ] **P1.5 Import command:** `POST /admin/imports` (or a command-line runner on an `import` profile) taking a repo and a limit, and writing `import_run` statistics.
   *Done when:* about 5,000 recent issues are imported locally in one run, within rate limits.
 - [ ] **P1.6 Comments for the duplicate subset:** fetch comments and timeline cross-references only for issues labelled `status: duplicate`.

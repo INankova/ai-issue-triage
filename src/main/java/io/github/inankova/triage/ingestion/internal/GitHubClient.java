@@ -8,6 +8,7 @@ import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -122,8 +123,26 @@ public class GitHubClient {
      * @throws GitHubApiException if GitHub answers with an error status, after any retries
      */
     public List<GitHubIssue> fetchIssues(String repo, int limit) {
+        return fetchPages(issuesUri(repo, "created", "desc", null), limit);
+    }
+
+    /**
+     * Fetches every issue updated at or after {@code since}, following all pages (P1.4, incremental sync).
+     *
+     * <p>Oldest update first: if a sync stops halfway, the newest update stored so far is still a safe place for the
+     * next sync to start from, so nothing in between is skipped.
+     *
+     * @param repo owner and name, for example {@code spring-projects/spring-boot}
+     * @param since GitHub's {@code since} filter; issues updated exactly then are included
+     * @throws GitHubApiException if GitHub answers with an error status, after any retries
+     */
+    public List<GitHubIssue> fetchIssuesUpdatedSince(String repo, Instant since) {
+        return fetchPages(issuesUri(repo, "updated", "asc", since), Integer.MAX_VALUE);
+    }
+
+    private List<GitHubIssue> fetchPages(URI firstPage, int limit) {
         List<GitHubIssue> issues = new ArrayList<>();
-        URI next = firstPage(repo);
+        URI next = firstPage;
         while (next != null && issues.size() < limit) {
             Page page = fetchPage(next);
             issues.addAll(page.issues());
@@ -132,18 +151,20 @@ public class GitHubClient {
         return List.copyOf(issues.subList(0, Math.min(limit, issues.size())));
     }
 
-    private URI firstPage(String repo) {
+    private URI issuesUri(String repo, String sort, String direction, Instant since) {
         Matcher matcher = REPO.matcher(repo);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("Expected a repository as owner/name, got: " + repo);
         }
-        return UriComponentsBuilder.fromUri(baseUrl)
+        UriComponentsBuilder uri = UriComponentsBuilder.fromUri(baseUrl)
                 .path("/repos/{owner}/{name}/issues")
                 .queryParam("state", "all") // closed issues carry the maintainers' final labels
-                .queryParam("sort", "created")
-                .queryParam("direction", "desc")
-                .queryParam("per_page", PAGE_SIZE)
-                .build(matcher.group(1), matcher.group(2));
+                .queryParam("sort", sort)
+                .queryParam("direction", direction);
+        if (since != null) {
+            uri.queryParam("since", since.truncatedTo(ChronoUnit.SECONDS)); // ISO 8601, e.g. 2026-11-27T10:46:48Z
+        }
+        return uri.queryParam("per_page", PAGE_SIZE).build(matcher.group(1), matcher.group(2));
     }
 
     /** Resilience4j retries transient failures; rate limits are handled one level down. */
