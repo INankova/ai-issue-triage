@@ -72,6 +72,9 @@ The reason behind each choice is recorded in [docs/adr](docs/adr/).
 # No paid API key needed: the default profile uses free local models
 .\mvnw.cmd verify            # build + tests (no real LLM or GitHub calls)
 .\mvnw.cmd spring-boot:run   # starts PostgreSQL via Docker Compose automatically
+
+# Import the 5,000 most recent Spring Boot issues into the local database (about 60 GitHub requests, ~1.5 min)
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=import" "-Dspring-boot.run.arguments=--limit=5000"
 ```
 
 ## Documentation

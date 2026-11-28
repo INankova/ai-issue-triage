@@ -115,11 +115,14 @@ public class GitHubClient {
     }
 
     /**
-     * Fetches issues of a repository, newest first, following pages until {@code limit} issues are collected or
-     * there are no more pages. Includes pull requests, which GitHub lists on the same endpoint.
+     * Fetches the most recently created issues of a repository, newest first, following pages until {@code limit}
+     * issues are collected or there are no more pages.
+     *
+     * <p>The limit counts issues only. GitHub lists pull requests on the same endpoint; the ones met on the way are
+     * returned too, so the caller can count them, but they don't use up the limit.
      *
      * @param repo owner and name, for example {@code spring-projects/spring-boot}
-     * @param limit the most issues to return
+     * @param limit how many issues (not pull requests) to collect
      * @throws GitHubApiException if GitHub answers with an error status, after any retries
      */
     public List<GitHubIssue> fetchIssues(String repo, int limit) {
@@ -140,15 +143,25 @@ public class GitHubClient {
         return fetchPages(issuesUri(repo, "updated", "asc", since), Integer.MAX_VALUE);
     }
 
-    private List<GitHubIssue> fetchPages(URI firstPage, int limit) {
-        List<GitHubIssue> issues = new ArrayList<>();
+    /** Follows pages until {@code issueLimit} real issues are collected; pull requests met on the way are kept. */
+    private List<GitHubIssue> fetchPages(URI firstPage, int issueLimit) {
+        List<GitHubIssue> fetched = new ArrayList<>();
+        int issueCount = 0;
         URI next = firstPage;
-        while (next != null && issues.size() < limit) {
+        while (next != null && issueCount < issueLimit) {
             Page page = fetchPage(next);
-            issues.addAll(page.issues());
+            for (GitHubIssue entry : page.issues()) {
+                if (issueCount == issueLimit) {
+                    break; // enough issues: drop the rest of this page
+                }
+                fetched.add(entry);
+                if (entry.pullRequest() == null) {
+                    issueCount++;
+                }
+            }
             next = page.next();
         }
-        return List.copyOf(issues.subList(0, Math.min(limit, issues.size())));
+        return List.copyOf(fetched);
     }
 
     private URI issuesUri(String repo, String sort, String direction, Instant since) {
